@@ -8,6 +8,7 @@ int main(int argc,char *argv[]){
 	pid_h1=fork();
 	if(pid_h1==0){
 		pid_n=fork();
+		printf("me vine2 ");
 		if(pid_n==0){
 			i++;
 			printf("NIeto: i=%d\n",i);
