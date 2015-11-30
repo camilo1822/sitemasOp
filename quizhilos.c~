@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
 	gettimeofday(&tf,NULL);
 	tiempo=(tf.tv_sec - ti.tv_sec)*1000 + (tf.tv_usec - ti.tv_usec)/1000.0;
 	printf("Total result = %d\n",sum);
-	printf("Tiempo = %g\n",tiempo);
 	
 	return EXIT_SUCCESS;
 }

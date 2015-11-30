@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#define NUMTHREADS 3
+//#define NUMTHREADS 3
 
 int values[]={11,2,3,4,5,6,7,8,9,10,11,12};
 struct parameters{
@@ -11,43 +11,51 @@ struct parameters{
 };
 
 
-
 //int sum = 0; /* this data is shared by the thread(s) */
 void *runner(void *param); /* threads call this function */
 
 int main(int argc, char *argv[])
 {
+	if (argc != 2){
+		printf("error: debe ingesar asi: ./a.out <numero hilos>\n");
+		exit(0)	;
+	}
+	int numHilos=atoi(argv[1]);
+	
 	struct timeval ti,tf;
 	double tiempo;
-	pthread_t tid[NUMTHREADS]; /* the thread identifier */
+	pthread_t tid[numHilos]; /* the thread identifier */
 	unsigned char cnt =0;
 	int sum=0; 	
 	
-	int *response[NUMTHREADS];
+	int *response[numHilos];
 	//int value = atoi(argv[1]);
 	
-	struct parameters params[NUMTHREADS];
+	struct parameters params[numHilos];
 	
 	
-	
+	int i;
+	int pro = 12/numHilos;
+	int aux=pro;
 	params[0].down = 1;
-	params[0].up = 4;
-	params[1].down = 5;
-	params[1].up = 8;
-	params[2].down = 9;
-	params[2].up = 12;
+	params[0].up = pro;
+	for(i=1;i<numHilos;i++){
+		params[i].down = pro+1;
+		pro+=aux;
+		params[i].up = pro;
+	}
 
 	/* create the thread */
-	for(cnt=0; cnt < NUMTHREADS; cnt++){ 	
+	for(cnt=0; cnt < numHilos; cnt++){ 	
 		pthread_create(&tid[cnt], NULL, runner, (void*)&params[cnt]);
 	}
 	/* wait for the thread to exit */
-	for(cnt=0; cnt < NUMTHREADS; cnt++){
+	for(cnt=0; cnt < numHilos; cnt++){
 		pthread_join(tid[cnt], (void**) &response[cnt]);
 		sum += *response[cnt];
 	}	
 	gettimeofday(&ti,NULL);
-	for(cnt=0; cnt < NUMTHREADS; cnt++){
+	for(cnt=0; cnt < numHilos; cnt++){
 		printf("Parcial result %d\n", *response[cnt]);
 	}	
 	gettimeofday(&tf,NULL);
